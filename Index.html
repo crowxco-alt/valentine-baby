@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Valentine 💘</title>
+
+<style>
+body {
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: Arial, sans-serif;
+  overflow: hidden;
+  color: white;
+  text-align: center;
+  background: black;
+}
+
+h1 { font-size: 32px; }
+
+.warning {
+  margin-top: 10px;
+  font-size: 14px;
+  color: pink;
+  animation: glow 1.5s infinite alternate;
+}
+
+@keyframes glow {
+  from { text-shadow: 0 0 5px pink; }
+  to { text-shadow: 0 0 20px hotpink; }
+}
+
+.buttons {
+  margin-top: 20px;
+  position: relative;
+}
+
+button {
+  font-size: 20px;
+  padding: 12px 25px;
+  margin: 10px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+#yes { background: #ff4d6d; color: white; }
+#no { background: white; color: #ff4d6d; }
+
+canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+#stars { z-index: -1; }
+</style>
+</head>
+
+<body>
+
+<canvas id="stars"></canvas>
+<canvas id="fireworks"></canvas>
+
+<div id="content">
+  <h1>Stikeroli… will you be my Valentine? 💖</h1>
+  <div class="warning">no kodukenda work avilaa 😌</div>
+
+  <div class="buttons">
+    <button id="yes">YES 💘</button>
+    <button id="no">NO 🙈</button>
+  </div>
+</div>
+
+<audio id="music" loop>
+  <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_0c6ff2d4df.mp3?filename=romantic-background-112191.mp3" type="audio/mp3">
+</audio>
+
+<script>
+/* Galaxy */
+const starCanvas = document.getElementById("stars");
+const sctx = starCanvas.getContext("2d");
+starCanvas.width = window.innerWidth;
+starCanvas.height = window.innerHeight;
+
+let stars = [];
+for (let i = 0; i < 200; i++) {
+  stars.push({
+    x: Math.random() * starCanvas.width,
+    y: Math.random() * starCanvas.height,
+    r: Math.random() * 1.5,
+    speed: Math.random() * 0.5
+  });
+}
+
+function drawStars() {
+  sctx.clearRect(0, 0, starCanvas.width, starCanvas.height);
+  sctx.fillStyle = "white";
+
+  stars.forEach(star => {
+    star.y += star.speed;
+    if (star.y > starCanvas.height) star.y = 0;
+    sctx.beginPath();
+    sctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
+    sctx.fill();
+  });
+
+  requestAnimationFrame(drawStars);
+}
+drawStars();
+
+/* Buttons */
+const noBtn = document.getElementById("no");
+const yesBtn = document.getElementById("yes");
+const music = document.getElementById("music");
+
+/* RUN AWAY NO BUTTON */
+function moveNoButton() {
+  const x = Math.random() * (window.innerWidth - 100);
+  const y = Math.random() * (window.innerHeight - 50);
+
+  noBtn.style.position = "fixed";
+  noBtn.style.left = x + "px";
+  noBtn.style.top = y + "px";
+}
+
+noBtn.addEventListener("mouseenter", moveNoButton);
+noBtn.addEventListener("touchstart", moveNoButton);
+noBtn.addEventListener("click", moveNoButton);
+
+/* YES click */
+yesBtn.addEventListener("click", () => {
+  music.play();
+
+  document.getElementById("content").innerHTML = `
+    <h1>🫢yay 🫢<br> ENAL ORU UMAA THAA  muthumani 😌❤️</h1>
+    <img src="https://media4.giphy.com/media/v1.Y2lkPTZjMDliOTUyOWpmZmdibzRmd3Z1aHdmNWF6Nml0MGQzbThtbXN0aDJwZDY4bXAxZSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/WxHxtKumQOMs8/giphy.gif"
+         style="width:280px;margin-top:20px;border-radius:20px;box-shadow:0 0 30px pink;">
+  `;
+
+  bombExplosion();
+  launchFireworks();
+});
+
+/* Fireworks */
+const canvas = document.getElementById("fireworks");
+const ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let particles = [];
+
+function launchFireworks() {
+  for (let i = 0; i < 200; i++) {
+    particles.push({
+      x: canvas.width / 2,
+      y: canvas.height / 2,
+      angle: Math.random() * 2 * Math.PI,
+      speed: Math.random() * 6 + 2,
+      life: 120
+    });
+  }
+}
+
+function bombExplosion() {
+  for (let i = 0; i < 400; i++) {
+    particles.push({
+      x: canvas.width / 2,
+      y: canvas.height / 2,
+      angle: Math.random() * 2 * Math.PI,
+      speed: Math.random() * 10 + 5,
+      life: 80
+    });
+  }
+
+  document.body.style.background = "white";
+  setTimeout(() => {
+    document.body.style.background = "black";
+  }, 120);
+}
+
+function animateFireworks() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  particles.forEach((p, i) => {
+    p.x += Math.cos(p.angle) * p.speed;
+    p.y += Math.sin(p.angle) * p.speed;
+    p.life--;
+
+    ctx.fillStyle = "pink";
+    ctx.fillRect(p.x, p.y, 3, 3);
+
+    if (p.life <= 0) particles.splice(i, 1);
+  });
+
+  requestAnimationFrame(animateFireworks);
+}
+animateFireworks();
+</script>
+
+</body>
+</html>
